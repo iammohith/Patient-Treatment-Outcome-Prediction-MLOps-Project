@@ -42,7 +42,6 @@ venv.bak/
 .ipynb_checkpoints
 
 # DVC
-/dvc.lock
 /data/raw/real_drug_dataset.csv
 /data/processed/
 /models/

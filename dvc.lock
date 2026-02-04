@@ -1,0 +1,42 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/data/preprocess.py --input data/raw/real_drug_dataset.csv 
+      --output data/processed
+    deps:
+    - path: data/raw/real_drug_dataset.csv
+      hash: md5
+      md5: dc979022479683b3e8b9b9b9a98e76ab
+      size: 58891
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: 9511883c823f471653b79376268251f5
+      size: 2365
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 2fbe6c5f0170af07acba1ebb89c27d59.dir
+      size: 75002
+      nfiles: 6
+  train:
+    cmd: python src/train/train.py --data data/processed --model-dir models 
+      --metrics metrics.json
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 2fbe6c5f0170af07acba1ebb89c27d59.dir
+      size: 75002
+      nfiles: 6
+    - path: src/train/train.py
+      hash: md5
+      md5: fb37b332548219eecde41bca4669620b
+      size: 1847
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: ce05d8bcf9f2437b044112d3b634fb10
+      size: 95
+    - path: models/model.joblib
+      hash: md5
+      md5: c7df54648b884a4762c0ab54a7b72a81
+      size: 260409
