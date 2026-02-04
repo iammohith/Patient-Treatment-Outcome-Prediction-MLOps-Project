@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drug-prediction-api
+  labels:
+    app: drug-prediction-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: drug-prediction-api
+  template:
+    metadata:
+      labels:
+        app: drug-prediction-api
+    spec:
+      containers:
+      - name: api
+        image: drug-prediction-api:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: MODEL_PATH
+          value: "/app/models/model.joblib"
+        # We assume models are baked in or mounted. For this scaffold, we baked them in?
+        # In Dockerfile I commented out COPY models.
+        # Let's update Dockerfile to Copy models or assume we run with a volume in local dev.
+        # In K8s, we usually use an InitContainer to pull from DVC/S3 or bake into image.
+        # For simplicity of this "template", I will assume they are BAKED IN for the final image.
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drug-prediction-api
+spec:
+  selector:
+    app: drug-prediction-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

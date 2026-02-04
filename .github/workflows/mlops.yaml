@@ -1,0 +1,46 @@
+name: MLOps Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 pytest
+
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings
+        flake8 src --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Run DVC Pipeline (Repro)
+      run: |
+        # In a real setup, configure remote storage credentials here
+        # dvc pull
+        dvc repro
+        
+    - name: Build API Docker Image
+      run: |
+        docker build -f docker/api/Dockerfile -t drug-prediction-api:latest .
+
+    - name: Build Web Docker Image
+      run: |
+        docker build -f docker/web/Dockerfile -t drug-prediction-web:latest .

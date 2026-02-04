@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaAI - Treatment Outcome Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen p-6 flex items-center justify-center text-slate-800">
+
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Form Section -->
+        <div class="glass rounded-2xl shadow-2xl p-8 space-y-6">
+            <div class="space-y-2">
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Treatment Predictor</h1>
+                <p class="text-slate-500 text-sm">AI-driven insights for patient outcomes.</p>
+            </div>
+
+            <form id="predictForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Age</label>
+                        <input type="number" name="Age" required class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g. 45">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Gender</label>
+                        <select name="Gender" class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Condition</label>
+                    <input type="text" name="Condition" required class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g. Hypertension">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Drug Name</label>
+                    <input type="text" name="Drug_Name" required class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g. Metoprolol">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Dosage (mg)</label>
+                        <input type="number" step="0.1" name="Dosage_mg" required class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g. 50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Duration (days)</label>
+                        <input type="number" name="Treatment_Duration_days" required class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g. 30">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Side Effects</label>
+                    <input type="text" name="Side_Effects" required class="w-full px-4 py-2 rounded-lg bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="e.g. Nausea">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5">
+                    Predict Outcome
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Section -->
+        <div class="flex flex-col justify-center space-y-6">
+            <div id="resultCard" class="glass rounded-2xl shadow-2xl p-8 hidden opacity-0 transition-all duration-500 transform translate-y-4">
+                <h2 class="text-xl font-bold text-slate-900 mb-2">Prediction Result</h2>
+                <div class="flex items-center justify-center py-8">
+                    <div class="relative w-40 h-40 flex items-center justify-center">
+                        <!-- Simple CSS Gauge circle -->
+                        <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent border-l-transparent transform rotate-45" style="border-right-color: transparent"></div>
+                        <span id="scoreValue" class="text-4xl font-bold text-blue-600">0.0</span>
+                    </div>
+                </div>
+                <p class="text-center text-slate-600 text-sm">Predicted Improvement Score</p>
+            </div>
+            
+            <div class="glass rounded-2xl p-6 text-sm text-slate-600 bg-white/80">
+                <h3 class="font-bold text-slate-900 mb-2">Model Confidence</h3>
+                <p>Based on our XGBoost Regressor analysis of 1000+ patient records.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('predictForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Convert types
+            data.Age = parseInt(data.Age);
+            data.Dosage_mg = parseFloat(data.Dosage_mg);
+            data.Treatment_Duration_days = parseInt(data.Treatment_Duration_days);
+
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = 'Analyzing...';
+            btn.disabled = true;
+
+            try {
+                // Assuming API is on localhost:8000 for demo purposes
+                // In prod, this would be an env var or relative path if served from same origin
+                const response = await fetch('http://localhost:8000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Prediction failed');
+                
+                const result = await response.json();
+                
+                // Show result
+                const card = document.getElementById('resultCard');
+                card.classList.remove('hidden');
+                // Trigger reflow
+                void card.offsetWidth; 
+                card.classList.remove('opacity-0', 'translate-y-4');
+                
+                document.getElementById('scoreValue').innerText = result.Improvement_Score.toFixed(1);
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

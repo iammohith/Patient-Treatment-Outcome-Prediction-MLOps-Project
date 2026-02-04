@@ -1,0 +1,12 @@
+pandas
+numpy
+scikit-learn
+xgboost
+fastapi
+uvicorn
+dvc
+dvclive
+joblib
+prometheus-client
+python-multipart
+requests

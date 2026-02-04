@@ -1,0 +1,21 @@
+stages:
+  preprocess:
+    cmd: python src/data/preprocess.py --input data/raw/real_drug_dataset.csv --output data/processed
+    deps:
+    - src/data/preprocess.py
+    - data/raw/real_drug_dataset.csv
+    outs:
+    - data/processed:
+        persist: true
+
+  train:
+    cmd: python src/train/train.py --data data/processed --model-dir models --metrics metrics.json
+    deps:
+    - src/train/train.py
+    - data/processed
+    outs:
+    - models/model.joblib:
+        cache: true
+    metrics:
+    - metrics.json:
+        cache: false
