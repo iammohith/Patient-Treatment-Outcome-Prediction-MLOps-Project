@@ -17,7 +17,6 @@ This repository contains an end-to-end MLOps pipeline for predicting patient imp
 ├── k8s/                 # Kubernetes manifests
 ├── web/                 # Frontend application
 ├── dvc.yaml             # DVC pipeline configuration
-└── .github/workflows/   # CI/CD pipelines
 ```
 
 ## Setup & Usage
