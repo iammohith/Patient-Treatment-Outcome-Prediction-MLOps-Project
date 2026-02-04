@@ -17,7 +17,7 @@
 
 ---
 
-## � Introduction (Start Here!)
+## Introduction (Start Here!)
 
 Welcome! This project is a complete **MLOps (Machine Learning Operations)** system. It's not just a script that trains a model; it's a full production engine that simulates how companies like Netflix or Uber deploy AI.
 
@@ -128,7 +128,7 @@ uvicorn src.api.main:app --reload
 
 ---
 
-## � API Documentation
+## API Documentation
 
 For developers who want to use code to get predictions.
 
@@ -242,7 +242,7 @@ A: check `chmod +x` on scripts or ensure you aren't running as a restricted user
 
 ---
 
-## � License
+## License
 
 This project is licensed under the **MIT License**. You can use it, change it, and sell it, as long as you keep the copyright notice.
 
