@@ -11,8 +11,6 @@
 **Can we predict how much a patient will improve based on their medication?**
 *A production-grade Machine Learning system built with MLOps best practices.*
 
-[🚀 Quick Start](#-quick-start-guide) • [🏗️ Architecture](#-system-architecture) • [🛠️ Technical Details](#-technical-details) • [📚 API Docs](#-api-documentation)
-
 </div>
 
 ---
@@ -170,7 +168,7 @@ Get system health data (for Prometheus).
 
 ---
 
-## �️ Technical Details (Under the Hood)
+## Technical Details (Under the Hood)
 
 ### 1. Data Version Control (DVC)
 
