@@ -227,7 +227,7 @@ docker build -f docker/web/Dockerfile -t drug-prediction-web:latest .
 
 ---
 
-## ❓ Troubleshooting (Help!)
+## Troubleshooting (Help!)
 
 **Q: I get "Model not loaded" error.**
 A: Did you run `dvc repro`? The model is created during training. The API needs the file `models/model.joblib` to exist.
